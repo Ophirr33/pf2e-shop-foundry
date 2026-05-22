@@ -1,11 +1,11 @@
 // Minimal Foundry VTT global stubs. Expand as needed.
 
 declare const Hooks: {
-  once(event: string, fn: (...args: unknown[]) => void): void;
-  on(event: string, fn: (...args: unknown[]) => void): number;
+  once(event: string, fn: (...args: any[]) => void): void;
+  on(event: string, fn: (...args: any[]) => void): number;
   off(event: string, id: number): void;
-  call(event: string, ...args: unknown[]): boolean;
-  callAll(event: string, ...args: unknown[]): boolean;
+  call(event: string, ...args: any[]): boolean;
+  callAll(event: string, ...args: any[]): boolean;
 };
 
 declare class Item {
@@ -27,12 +27,14 @@ declare class Actor {
   img: string;
   system: unknown;
   items: EmbeddedCollection<Item>;
+  sheet: { render(force?: boolean): void } | null;
   getFlag(scope: string, key: string): unknown;
   setFlag(scope: string, key: string, value: unknown): Promise<Actor>;
   unsetFlag(scope: string, key: string): Promise<Actor>;
   update(data: object): Promise<Actor | undefined>;
   createEmbeddedDocuments(type: "Item", data: object[]): Promise<Item[]>;
   deleteEmbeddedDocuments(type: "Item", ids: string[]): Promise<Item[]>;
+  static create(data: { name: string; type: string; img?: string }): Promise<Actor | undefined>;
 }
 
 declare class User {
@@ -112,6 +114,22 @@ declare namespace foundry {
       }
     }
   }
+}
+
+interface DialogButton {
+  icon?: string;
+  label: string;
+  callback?: (html: HTMLElement) => void;
+}
+
+declare class Dialog {
+  constructor(data: {
+    title: string;
+    content: string;
+    buttons: Record<string, DialogButton>;
+    default: string;
+  });
+  render(force?: boolean): this;
 }
 
 declare class DocumentSheetConfig {
