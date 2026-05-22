@@ -1,10 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MODULE_ID = void 0;
-exports.getItemPrice = getItemPrice;
-exports.setPriceOverride = setPriceOverride;
-exports.buyItem = buyItem;
-exports.MODULE_ID = "pf2e-shop-foundry";
+export const MODULE_ID = "pf2e-shop-foundry";
 /** PF2e coin values in copper pieces. */
 const CP_VALUE = { pp: 1000, gp: 100, sp: 10, cp: 1 };
 function totalCopper(currency) {
@@ -19,8 +13,8 @@ function copperToCurrency(copper) {
     copper -= sp * 10;
     return { pp, gp, sp, cp: copper };
 }
-function getItemPrice(shopActor, itemId) {
-    const overrides = (shopActor.getFlag(exports.MODULE_ID, "priceOverrides") ?? []);
+export function getItemPrice(shopActor, itemId) {
+    const overrides = (shopActor.getFlag(MODULE_ID, "priceOverrides") ?? []);
     const override = overrides.find((o) => o.itemId === itemId);
     if (override)
         return override.gp;
@@ -32,16 +26,16 @@ function getItemPrice(shopActor, itemId) {
         .system?.price?.value?.gp;
     return price ?? 0;
 }
-async function setPriceOverride(shopActor, itemId, gp) {
-    const overrides = (shopActor.getFlag(exports.MODULE_ID, "priceOverrides") ?? []);
+export async function setPriceOverride(shopActor, itemId, gp) {
+    const overrides = (shopActor.getFlag(MODULE_ID, "priceOverrides") ?? []);
     const idx = overrides.findIndex((o) => o.itemId === itemId);
     if (idx >= 0)
         overrides[idx].gp = gp;
     else
         overrides.push({ itemId, gp });
-    await shopActor.setFlag(exports.MODULE_ID, "priceOverrides", overrides);
+    await shopActor.setFlag(MODULE_ID, "priceOverrides", overrides);
 }
-async function buyItem(shopActor, itemId, buyerActor) {
+export async function buyItem(shopActor, itemId, buyerActor) {
     const item = shopActor.items.get(itemId);
     if (!item)
         return { success: false, reason: "Item not found in shop." };

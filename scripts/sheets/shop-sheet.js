@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ShopSheet = void 0;
-const transaction_js_1 = require("../transaction.js");
+import { buyItem, getItemPrice, setPriceOverride } from "../transaction.js";
 const { ActorSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
-class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     static DEFAULT_OPTIONS = {
         classes: ["pf2e-shop", "sheet", "actor"],
         position: { width: 600, height: 500 },
@@ -29,7 +26,7 @@ class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
         const base = await super._prepareContext(options);
         const actor = this.actor;
         const items = actor.items.map((item) => {
-            const priceGp = (0, transaction_js_1.getItemPrice)(actor, item.id) ?? 0;
+            const priceGp = getItemPrice(actor, item.id) ?? 0;
             return {
                 id: item.id,
                 name: item.name,
@@ -71,7 +68,7 @@ class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
             ui.notifications.warn("You have no active character assigned.");
             return;
         }
-        const result = await (0, transaction_js_1.buyItem)(this.actor, itemId, buyer);
+        const result = await buyItem(this.actor, itemId, buyer);
         if (result.success) {
             const item = this.actor.items.get(itemId);
             ui.notifications.info(`Purchased ${item?.name ?? "item"}.`);
@@ -94,9 +91,8 @@ class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
             return;
         const gp = parseFloat(input.value);
         if (!isNaN(gp) && gp >= 0) {
-            await (0, transaction_js_1.setPriceOverride)(this.actor, itemId, gp);
+            await setPriceOverride(this.actor, itemId, gp);
         }
     }
 }
-exports.ShopSheet = ShopSheet;
 //# sourceMappingURL=shop-sheet.js.map

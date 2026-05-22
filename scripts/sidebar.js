@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerSidebarButton = registerSidebarButton;
-const transaction_js_1 = require("./transaction.js");
+import { MODULE_ID } from "./transaction.js";
 async function promptShopName() {
     return new Promise((resolve) => {
         new Dialog({
@@ -29,7 +26,7 @@ async function promptShopName() {
         }).render(true);
     });
 }
-function registerSidebarButton() {
+export function registerSidebarButton() {
     Hooks.on("renderActorDirectory", (_app, html) => {
         if (!game.user?.isGM)
             return;
@@ -48,7 +45,7 @@ function registerSidebarButton() {
                 return;
             const actor = await Actor.create({
                 name,
-                type: `${transaction_js_1.MODULE_ID}.shop`,
+                type: `${MODULE_ID}.shop`,
                 img: "icons/environment/settlement/market.webp",
             });
             actor?.sheet?.render(true);
