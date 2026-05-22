@@ -1,7 +1,11 @@
-import { MODULE_ID, buyItem, getItemPrice, setPriceOverride } from "../transaction.js";
-const { ActorSheetV2 } = foundry.applications.sheets;
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+import { buyItem, getItemPrice, setPriceOverride } from "../transaction.js";
+import { getFlag } from "../flags.js";
+// Extracting the mixin result to a const prevents TypeScript from hitting its
+// recursive type-depth limit when checking the ShopSheet class definition.
+const ShopSheetBase = foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2);
+// @ts-expect-error - TS2415: the mixin produces types too deep for tsc to verify;
+// the inheritance is correct at runtime.
+export class ShopSheet extends ShopSheetBase {
     static DEFAULT_OPTIONS = {
         classes: ["pf2e-shop", "sheet", "actor"],
         position: { width: 600, height: 500 },
@@ -14,84 +18,85 @@ export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     };
     static PARTS = {
         header: { template: "modules/pf2e-shop-foundry/templates/shop-header.hbs" },
-        body: { template: "" }, // resolved dynamically
+        body: { template: "" }, // set dynamically in _configureRenderOptions
     };
     get isGM() {
         return game.user?.isGM ?? false;
     }
     get title() {
-        return this.actor.name ?? "Shop";
+        return this.document.name ?? "Shop";
+    }
+    _configureRenderOptions(options) {
+        super._configureRenderOptions(options);
+        ShopSheet.PARTS.body = {
+            template: this.isGM
+                ? "modules/pf2e-shop-foundry/templates/shop-gm.hbs"
+                : "modules/pf2e-shop-foundry/templates/shop-player.hbs",
+        };
     }
     async _prepareContext(options) {
         const base = await super._prepareContext(options);
-        const actor = this.actor;
+        const actor = this.document;
         const items = actor.items.map((item) => {
-            const priceGp = getItemPrice(actor, item.id) ?? 0;
+            const id = item.id; // embedded documents always have ids
+            const priceGp = getItemPrice(actor, id) ?? 0;
             return {
-                id: item.id,
+                id,
                 name: item.name,
                 img: item.img,
                 priceGp,
-                priceDisplay: priceGp === 1 ? "1 gp" : `${priceGp} gp`,
+                priceDisplay: `${priceGp} gp`,
             };
         });
-        const buyer = game.user?.character ?? null;
-        const buyerCurrency = buyer
-            ?.system?.currency;
+        // game.user.character is PF2e-specific — cast through unknown.
+        const buyer = (game.user?.character ?? null);
+        const pf2eCurrency = buyer?.system?.currency;
+        const buyerGold = pf2eCurrency
+            ? pf2eCurrency.pp * 10 + pf2eCurrency.gp + pf2eCurrency.sp / 10 + pf2eCurrency.cp / 100
+            : null;
         return {
             ...base,
             actor,
             items,
             isGM: this.isGM,
-            shopkeeperName: actor.getFlag(MODULE_ID, "shopkeeperName") ?? "",
+            shopkeeperName: getFlag(actor, "shopkeeperName") ?? "",
             buyer,
-            buyerGold: buyerCurrency
-                ? buyerCurrency.pp * 10 + buyerCurrency.gp + buyerCurrency.sp / 10 + buyerCurrency.cp / 100
-                : null,
-        };
-    }
-    _configureRenderOptions(options) {
-        super._configureRenderOptions(options);
-        // Swap the body template depending on viewer.
-        this.constructor.PARTS.body = {
-            template: this.isGM
-                ? "modules/pf2e-shop-foundry/templates/shop-gm.hbs"
-                : "modules/pf2e-shop-foundry/templates/shop-player.hbs",
+            buyerGold,
         };
     }
     static async #onBuyItem(_event, target) {
         const itemId = target.dataset.itemId;
         if (!itemId)
             return;
-        const buyer = game.user?.character;
+        const buyer = (game.user?.character ?? null);
         if (!buyer) {
-            ui.notifications.warn("You have no active character assigned.");
+            ui.notifications?.warn("You have no active character assigned.");
             return;
         }
-        const result = await buyItem(this.actor, itemId, buyer);
+        const result = await buyItem(this.document, itemId, buyer);
         if (result.success) {
-            const item = this.actor.items.get(itemId);
-            ui.notifications.info(`Purchased ${item?.name ?? "item"}.`);
+            const item = this.document.items.get(itemId);
+            ui.notifications?.info(`Purchased ${item?.name ?? "item"}.`);
         }
         else {
-            ui.notifications.warn(result.reason ?? "Purchase failed.");
+            ui.notifications?.warn(result.reason ?? "Purchase failed.");
         }
     }
     static async #onRemoveItem(_event, target) {
         const itemId = target.dataset.itemId;
         if (!itemId)
             return;
-        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
     }
     static async #onSetPrice(_event, target) {
-        const itemId = target.closest("[data-item-id]")?.dataset.itemId;
-        const input = target.closest("[data-item-id]")
-            ?.querySelector("input[name='price']");
+        const row = target.closest("[data-item-id]");
+        const itemId = row?.dataset.itemId;
+        const input = row?.querySelector("input[name='price']");
         if (!itemId || !input)
             return;
         const gp = parseFloat(input.value);
         if (!isNaN(gp) && gp >= 0) {
-            await setPriceOverride(this.actor, itemId, gp);
+            await setPriceOverride(this.document, itemId, gp);
         }
     }
 }

@@ -1,4 +1,5 @@
 import { MODULE_ID } from "./transaction.js";
+import { setFlag } from "./flags.js";
 const SHEET_CLASS_KEY = `${MODULE_ID}.ShopSheet`;
 async function promptShopName() {
     return new Promise((resolve) => {
@@ -14,8 +15,8 @@ async function promptShopName() {
                     icon: "fas fa-check",
                     label: "Create",
                     default: true,
-                    callback: (_event, _button, dialog) => {
-                        const val = dialog.querySelector('[name="shop-name"]')?.value;
+                    callback: (_event, button) => {
+                        const val = button.form?.querySelector('[name="shop-name"]')?.value;
                         resolve(val || "New Shop");
                     },
                 },
@@ -46,16 +47,17 @@ export function registerSidebarButton() {
             const name = await promptShopName();
             if (!name)
                 return;
-            const actor = await Actor.create({
+            // "loot" is a PF2e-defined actor type unknown to LOFD types — cast required.
+            const actor = await Actor.implementation.create({
                 name,
                 type: "loot",
                 img: "icons/environment/settlement/market.webp",
-                flags: {
-                    [MODULE_ID]: { isShop: true },
-                    core: { sheetClass: SHEET_CLASS_KEY },
-                },
             });
-            actor?.sheet?.render(true);
+            if (!actor)
+                return;
+            await setFlag(actor, "isShop", true);
+            await actor.setFlag("core", "sheetClass", SHEET_CLASS_KEY);
+            actor.sheet?.render(true);
         });
         footer.appendChild(btn);
     });

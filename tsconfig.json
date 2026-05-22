@@ -6,6 +6,7 @@
     "outDir": "scripts",
     "rootDir": "src",
     "strict": true,
+    "types": ["@league-of-foundry-developers/foundry-vtt-types"],
     "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "declaration": false,
