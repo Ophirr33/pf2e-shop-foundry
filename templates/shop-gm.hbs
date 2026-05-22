@@ -1,0 +1,37 @@
+<section class="shop-body shop-body--gm">
+  <p class="shop-hint">Drag items from a compendium or sidebar onto this sheet to add them to the shop.</p>
+
+  <ul class="shop-item-list">
+    {{#each items}}
+      <li class="shop-item" data-item-id="{{id}}">
+        <img class="shop-item-img" src="{{img}}" alt="{{name}}" />
+        <span class="shop-item-name">{{name}}</span>
+        <label class="shop-price-label">
+          Price (gp):
+          <input
+            type="number"
+            name="price"
+            class="shop-price-input"
+            value="{{priceGp}}"
+            min="0"
+            step="0.1"
+          />
+        </label>
+        <button
+          type="button"
+          class="shop-price-btn"
+          data-action="setPrice"
+          data-item-id="{{id}}"
+        >Set</button>
+        <button
+          type="button"
+          class="shop-remove-btn"
+          data-action="removeItem"
+          data-item-id="{{id}}"
+        >Remove</button>
+      </li>
+    {{else}}
+      <li class="shop-empty">No items yet — drag items here to stock the shop.</li>
+    {{/each}}
+  </ul>
+</section>

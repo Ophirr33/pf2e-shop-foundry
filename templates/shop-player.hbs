@@ -1,0 +1,25 @@
+<section class="shop-body">
+  {{#if buyerGold}}
+    <p class="shop-funds">Your funds: <strong>{{buyerGold}} gp</strong></p>
+  {{else}}
+    <p class="shop-funds shop-funds--none">No character assigned.</p>
+  {{/if}}
+
+  <ul class="shop-item-list">
+    {{#each items}}
+      <li class="shop-item" data-item-id="{{id}}">
+        <img class="shop-item-img" src="{{img}}" alt="{{name}}" />
+        <span class="shop-item-name">{{name}}</span>
+        <span class="shop-item-price">{{priceDisplay}}</span>
+        <button
+          type="button"
+          class="shop-buy-btn"
+          data-action="buyItem"
+          data-item-id="{{id}}"
+        >Buy</button>
+      </li>
+    {{else}}
+      <li class="shop-empty">This shop has no items for sale.</li>
+    {{/each}}
+  </ul>
+</section>

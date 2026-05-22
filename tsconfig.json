@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "outDir": "scripts",
+    "rootDir": "src",
+    "strict": true,
+    "lib": ["ESNext", "DOM"],
+    "sourceMap": true,
+    "declaration": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}

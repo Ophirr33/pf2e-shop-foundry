@@ -1,0 +1,31 @@
+{
+  "id": "pf2e-shop-foundry",
+  "title": "PF2e Shop",
+  "description": "A shop module for Pathfinder 2e.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "authors": [{ "name": "ophirr33" }],
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/module.css"],
+  "languages": [],
+  "documentTypes": {
+    "Actor": {
+      "shop": {}
+    }
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": { "minimum": "7.0.0" }
+      }
+    ]
+  },
+  "url": "https://github.com/ophirr33/pf2e-shop-foundry",
+  "manifest": "https://raw.githubusercontent.com/ophirr33/pf2e-shop-foundry/main/module.json",
+  "download": "https://github.com/ophirr33/pf2e-shop-foundry/archive/refs/heads/main.zip"
+}

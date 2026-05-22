@@ -1,0 +1,124 @@
+.pf2e-shop .shop-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border-dark, #888);
+}
+
+.pf2e-shop .shop-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.pf2e-shop .shop-title {
+  margin: 0;
+  font-size: 1.2rem;
+  flex: 1;
+}
+
+.pf2e-shop .shop-keeper {
+  margin: 0;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--color-text-dark-secondary, #555);
+}
+
+.pf2e-shop .shop-body {
+  padding: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.pf2e-shop .shop-funds {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.pf2e-shop .shop-funds--none {
+  color: var(--color-text-dark-secondary, #888);
+}
+
+.pf2e-shop .shop-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-text-dark-secondary, #666);
+  font-style: italic;
+}
+
+.pf2e-shop .shop-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pf2e-shop .shop-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 4px;
+  background: var(--color-bg-alt, rgba(0, 0, 0, 0.04));
+}
+
+.pf2e-shop .shop-item:nth-child(even) {
+  background: var(--color-bg, rgba(0, 0, 0, 0.02));
+}
+
+.pf2e-shop .shop-item-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  object-fit: cover;
+}
+
+.pf2e-shop .shop-item-name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.pf2e-shop .shop-item-price {
+  font-size: 0.85rem;
+  color: var(--color-text-dark-secondary, #555);
+  min-width: 4rem;
+  text-align: right;
+}
+
+.pf2e-shop .shop-price-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.pf2e-shop .shop-price-input {
+  width: 60px;
+  text-align: right;
+}
+
+.pf2e-shop .shop-buy-btn,
+.pf2e-shop .shop-price-btn,
+.pf2e-shop .shop-remove-btn {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.pf2e-shop .shop-remove-btn {
+  color: var(--color-text-light-highlight, #fff);
+  background: var(--color-danger, #a00);
+  border-color: var(--color-danger, #a00);
+}
+
+.pf2e-shop .shop-empty {
+  color: var(--color-text-dark-secondary, #888);
+  font-style: italic;
+  padding: 1rem 0;
+  text-align: center;
+}
