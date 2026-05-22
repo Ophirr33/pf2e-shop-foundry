@@ -34,7 +34,7 @@ declare class Actor {
   update(data: object): Promise<Actor | undefined>;
   createEmbeddedDocuments(type: "Item", data: object[]): Promise<Item[]>;
   deleteEmbeddedDocuments(type: "Item", ids: string[]): Promise<Item[]>;
-  static create(data: { name: string; type: string; img?: string }): Promise<Actor | undefined>;
+  static create(data: { name: string; type: string; img?: string; flags?: Record<string, unknown> }): Promise<Actor | undefined>;
 }
 
 declare class User {
@@ -99,6 +99,20 @@ declare namespace foundry {
   }
   namespace applications {
     namespace api {
+      class DialogV2 {
+        constructor(config: {
+          window?: { title?: string };
+          content?: string;
+          buttons?: Array<{
+            action: string;
+            label: string;
+            icon?: string;
+            default?: boolean;
+            callback?: (event: Event, button: HTMLElement, dialog: HTMLElement) => void;
+          }>;
+        });
+        render(force?: boolean): this;
+      }
       function HandlebarsApplicationMixin<
         T extends abstract new (...args: unknown[]) => object
       >(base: T): T;

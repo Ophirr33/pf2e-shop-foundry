@@ -1,4 +1,4 @@
-import { buyItem, getItemPrice, setPriceOverride } from "../transaction.js";
+import { MODULE_ID, buyItem, getItemPrice, setPriceOverride } from "../transaction.js";
 const { ActorSheetV2 } = foundry.applications.sheets;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
@@ -43,7 +43,7 @@ export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
             actor,
             items,
             isGM: this.isGM,
-            shopkeeperName: actor.system.shopkeeperName ?? "",
+            shopkeeperName: actor.getFlag(MODULE_ID, "shopkeeperName") ?? "",
             buyer,
             buyerGold: buyerCurrency
                 ? buyerCurrency.pp * 10 + buyerCurrency.gp + buyerCurrency.sp / 10 + buyerCurrency.cp / 100

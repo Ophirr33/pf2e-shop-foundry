@@ -51,7 +51,7 @@ export class ShopSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       actor,
       items,
       isGM: this.isGM,
-      shopkeeperName: (actor.system as unknown as { shopkeeperName?: string }).shopkeeperName ?? "",
+      shopkeeperName: (actor.getFlag(MODULE_ID, "shopkeeperName") as string) ?? "",
       buyer,
       buyerGold: buyerCurrency
         ? buyerCurrency.pp * 10 + buyerCurrency.gp + buyerCurrency.sp / 10 + buyerCurrency.cp / 100

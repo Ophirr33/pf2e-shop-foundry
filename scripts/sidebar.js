@@ -1,29 +1,31 @@
 import { MODULE_ID } from "./transaction.js";
+const SHEET_CLASS_KEY = `${MODULE_ID}.ShopSheet`;
 async function promptShopName() {
     return new Promise((resolve) => {
-        new Dialog({
-            title: "Create Shop",
+        new foundry.applications.api.DialogV2({
+            window: { title: "Create Shop" },
             content: `<div class="form-group">
         <label>Shop Name</label>
         <input type="text" name="shop-name" value="New Shop" autofocus />
       </div>`,
-            buttons: {
-                create: {
-                    icon: '<i class="fas fa-check"></i>',
+            buttons: [
+                {
+                    action: "create",
+                    icon: "fas fa-check",
                     label: "Create",
-                    callback: (html) => {
-                        const root = html[0] ?? html;
-                        const val = root.querySelector('[name="shop-name"]')?.value;
+                    default: true,
+                    callback: (_event, _button, dialog) => {
+                        const val = dialog.querySelector('[name="shop-name"]')?.value;
                         resolve(val || "New Shop");
                     },
                 },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
+                {
+                    action: "cancel",
+                    icon: "fas fa-times",
                     label: "Cancel",
                     callback: () => resolve(null),
                 },
-            },
-            default: "create",
+            ],
         }).render(true);
     });
 }
@@ -32,7 +34,7 @@ export function registerSidebarButton() {
         if (!game.user?.isGM)
             return;
         if (html.querySelector(".create-shop-btn"))
-            return; // already injected
+            return;
         const footer = html.querySelector("footer");
         if (!footer)
             return;
@@ -46,8 +48,12 @@ export function registerSidebarButton() {
                 return;
             const actor = await Actor.create({
                 name,
-                type: `${MODULE_ID}.shop`,
+                type: "loot",
                 img: "icons/environment/settlement/market.webp",
+                flags: {
+                    [MODULE_ID]: { isShop: true },
+                    core: { sheetClass: SHEET_CLASS_KEY },
+                },
             });
             actor?.sheet?.render(true);
         });

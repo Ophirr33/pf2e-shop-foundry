@@ -1,30 +1,33 @@
 import { MODULE_ID } from "./transaction.js";
 
+const SHEET_CLASS_KEY = `${MODULE_ID}.ShopSheet`;
+
 async function promptShopName(): Promise<string | null> {
   return new Promise((resolve) => {
-    new Dialog({
-      title: "Create Shop",
+    new foundry.applications.api.DialogV2({
+      window: { title: "Create Shop" },
       content: `<div class="form-group">
         <label>Shop Name</label>
         <input type="text" name="shop-name" value="New Shop" autofocus />
       </div>`,
-      buttons: {
-        create: {
-          icon: '<i class="fas fa-check"></i>',
+      buttons: [
+        {
+          action: "create",
+          icon: "fas fa-check",
           label: "Create",
-          callback: (html: HTMLElement & { 0?: HTMLElement }) => {
-            const root = html[0] ?? html;
-            const val = root.querySelector<HTMLInputElement>('[name="shop-name"]')?.value;
+          default: true,
+          callback: (_event: Event, _button: HTMLElement, dialog: HTMLElement) => {
+            const val = dialog.querySelector<HTMLInputElement>('[name="shop-name"]')?.value;
             resolve(val || "New Shop");
           },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
+        {
+          action: "cancel",
+          icon: "fas fa-times",
           label: "Cancel",
           callback: () => resolve(null),
         },
-      },
-      default: "create",
+      ],
     }).render(true);
   });
 }
@@ -32,7 +35,7 @@ async function promptShopName(): Promise<string | null> {
 export function registerSidebarButton(): void {
   Hooks.on("renderActorDirectory", (_app: unknown, html: HTMLElement) => {
     if (!game.user?.isGM) return;
-    if (html.querySelector(".create-shop-btn")) return; // already injected
+    if (html.querySelector(".create-shop-btn")) return;
 
     const footer = html.querySelector("footer");
     if (!footer) return;
@@ -47,8 +50,12 @@ export function registerSidebarButton(): void {
 
       const actor = await Actor.create({
         name,
-        type: `${MODULE_ID}.shop`,
+        type: "loot",
         img: "icons/environment/settlement/market.webp",
+        flags: {
+          [MODULE_ID]: { isShop: true },
+          core: { sheetClass: SHEET_CLASS_KEY },
+        },
       });
       actor?.sheet?.render(true);
     });
