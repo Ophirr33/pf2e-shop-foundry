@@ -74,12 +74,14 @@ declare const CONFIG: {
 };
 
 declare namespace foundry {
-  namespace data {
+  namespace abstract {
     class TypeDataModel {
       static defineSchema(): Record<string, unknown>;
       prepareBaseData(): void;
       prepareDerivedData(): void;
     }
+  }
+  namespace data {
     namespace fields {
       class StringField {
         constructor(opts?: object);

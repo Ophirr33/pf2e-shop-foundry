@@ -1,5 +1,5 @@
-const { TypeDataModel, fields } = foundry.data;
-const { StringField, HTMLField } = fields;
+const { TypeDataModel } = foundry.abstract;
+const { StringField, HTMLField } = foundry.data.fields;
 export class ShopDataModel extends TypeDataModel {
     static defineSchema() {
         return {
