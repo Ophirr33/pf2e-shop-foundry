@@ -12,8 +12,9 @@ async function promptShopName(): Promise<string | null> {
         create: {
           icon: '<i class="fas fa-check"></i>',
           label: "Create",
-          callback: (html: HTMLElement) => {
-            const val = html.querySelector<HTMLInputElement>('[name="shop-name"]')?.value;
+          callback: (html: HTMLElement & { 0?: HTMLElement }) => {
+            const root = html[0] ?? html;
+            const val = root.querySelector<HTMLInputElement>('[name="shop-name"]')?.value;
             resolve(val || "New Shop");
           },
         },

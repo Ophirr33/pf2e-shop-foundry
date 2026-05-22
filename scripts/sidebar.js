@@ -12,7 +12,8 @@ async function promptShopName() {
                     icon: '<i class="fas fa-check"></i>',
                     label: "Create",
                     callback: (html) => {
-                        const val = html.querySelector('[name="shop-name"]')?.value;
+                        const root = html[0] ?? html;
+                        const val = root.querySelector('[name="shop-name"]')?.value;
                         resolve(val || "New Shop");
                     },
                 },
